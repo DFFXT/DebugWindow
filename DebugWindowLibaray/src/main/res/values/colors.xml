@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="view_debug_white">#fff</color>
+    <color name="view_debug_transparent">#0000</color>
+    <color name="view_debug_image_detail_title_bar_bg">#578FFF</color>
+    <color name="view_debug_common_press_foreground">#225C5F65</color>
+</resources>

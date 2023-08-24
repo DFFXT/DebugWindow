@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="view_debug_control_ui_status_bar_height">30dp</dimen>
+    <dimen name="view_debug_ui_control_button_margin">5dp</dimen>
+    <dimen name="view_debug_elevation">5dp</dimen>
+</resources>
