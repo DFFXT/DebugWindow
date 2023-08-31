@@ -50,7 +50,7 @@ class UIControl(private val ctx: Context) {
         if (contentLp == null) {
             contentLp = getLayoutParams()
             contentLp.width = ctx.resources.displayMetrics.widthPixels
-            contentLp.height = ctx.resources.displayMetrics.heightPixels
+            contentLp.height = WindowManager.LayoutParams.MATCH_PARENT
             contentLp.flags = contentLp.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         }
         wm.addView(contentBinding.root, contentLp)
@@ -81,15 +81,15 @@ class UIControl(private val ctx: Context) {
      * 加载功能页
      */
     fun loadPage(page: UIPage) {
-        val tabView = page.createTabView(ctx)
+        val tabView = page.createTabView(ctx, uiControlBinding.layoutControlBar)
         tabView.setOnClickListener {
             switchPage(page)
         }
         hostActivity?.let {
             page.onHostActivityChange(it)
         }
-        uiControlBinding.layoutControlBar.addView(tabView)
-        pages.add(page)
+        uiControlBinding.layoutControlBar.addView(tabView, 0)
+        pages.add(0, page)
     }
 
     /**
@@ -127,9 +127,9 @@ class UIControl(private val ctx: Context) {
     }
 
     fun removePage(p: UIPage) {
-        uiControlBinding.layoutControlBar.removeView(p.createTabView(ctx))
+        uiControlBinding.layoutControlBar.removeView(p.tabView)
         if (p.isOnShow) {
-            contentBinding.layoutContent.removeView(p.createContentView(ctx))
+            contentBinding.layoutContent.removeView(p.contentView)
             p.onClose()
         }
         p.onDestroy()

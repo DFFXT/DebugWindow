@@ -18,12 +18,12 @@ internal fun View.setSize(width: Int? = null, height: Int? = null) {
     layoutParams = lp
 }
 
-internal fun View.enablePress() {
+fun View.enablePress() {
     foreground =
         AppCompatResources.getDrawable(context, R.drawable.view_debug_common_press_foreground)
 }
 
-internal fun View.enableSelect() {
+fun View.enableSelect() {
     foreground =
         AppCompatResources.getDrawable(context, R.drawable.view_debug_common_selected_foreground)
     /*val d = StateListDrawable()

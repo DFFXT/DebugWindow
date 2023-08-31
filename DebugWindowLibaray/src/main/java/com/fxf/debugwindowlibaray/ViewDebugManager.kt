@@ -17,20 +17,17 @@ import java.util.LinkedList
  * 2. 查看图片信息
  */
 object ViewDebugManager {
+    // 是否支持应用外显示
+    private var showOnOtherApplication = false
     private val activityLifecycleCallbacks = object : ActivityStackCallback() {
-        private var init = false
         private val activities = LinkedList<Activity>()
         private var currentActivity: Activity? = null
+
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             super.onActivityCreated(p0, p1)
             currentActivity = p0
             activities.add(0, p0)
             uiControl.onActivityChange(WeakReference(p0))
-            if (!init) {
-                // addPage(ViewDebugImageManager.getPage())
-                addPage(EmptyPage())
-                init = true
-            }
         }
 
         override fun onActivityResumed(p0: Activity) {
@@ -44,7 +41,7 @@ object ViewDebugManager {
             super.onActivityDestroyed(p0)
             activities.remove(p0)
             // 所有页面退出后直接隐藏
-            if (activities.isEmpty()) {
+            if (activities.isEmpty() && !showOnOtherApplication) {
                 uiControl.close()
             }
         }
@@ -52,7 +49,7 @@ object ViewDebugManager {
         override fun onActivityStopped(p0: Activity) {
             super.onActivityStopped(p0)
             // 应用后台，隐藏
-            if (p0 == currentActivity) {
+            if (p0 == currentActivity && !showOnOtherApplication) {
                 uiControl.close()
             }
         }
@@ -63,6 +60,7 @@ object ViewDebugManager {
         if (this::app.isInitialized) return
         this.app = app
         app.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+        addPage(EmptyPage())
     }
 
     fun addPage(page: UIPage) {
@@ -84,5 +82,12 @@ object ViewDebugManager {
      */
     fun updatePosition(uiControlConfig: UiControlConfig) {
         uiControl.updatePosition(uiControlConfig)
+    }
+
+    /**
+     * 是否支持应用外显示
+     */
+    fun overOtherApplication(enable: Boolean) {
+        this.showOnOtherApplication = enable
     }
 }

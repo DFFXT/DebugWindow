@@ -29,21 +29,21 @@ abstract class UIPage {
 
     // 当前activity
     internal var hostActivity: WeakReference<Activity>? = null
-    internal fun createTabView(ctx: Context): View {
+    internal fun createTabView(ctx: Context, parent: ViewGroup): View {
         if (!this::tabView.isInitialized) {
-            tabView = onCreateTabView(ctx)
+            tabView = onCreateTabView(ctx, parent)
         }
         return tabView
     }
 
     internal fun createContentView(ctx: Context): View {
         if (!this::contentView.isInitialized) {
-            contentView = FrameLayout(ctx)
+            contentView = ConstraintLayout(ctx)
             contentView.layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
             )
-            contentView.addView(onCreateContentView(ctx))
+            contentView.addView(onCreateContentView(ctx, contentView))
         }
         return contentView
     }
@@ -104,7 +104,7 @@ abstract class UIPage {
 
     open fun enableTouch(): Boolean = true
     open fun enableFocus(): Boolean = false
-    open fun onCreateTabView(ctx: Context): View {
+    open fun onCreateTabView(ctx: Context, parent: ViewGroup): View {
         return AppCompatImageView(ctx).apply {
             val size =
                 ctx.resources.getDimensionPixelSize(R.dimen.view_debug_control_ui_status_bar_height)
@@ -120,7 +120,7 @@ abstract class UIPage {
         }
     }
 
-    abstract fun onCreateContentView(ctx: Context): View
+    abstract fun onCreateContentView(ctx: Context, parent: ViewGroup): View
 
     // 获取tab图片样式
     abstract fun getTabIcon(): Int
