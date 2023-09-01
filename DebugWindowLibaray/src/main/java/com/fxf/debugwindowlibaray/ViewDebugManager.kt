@@ -25,7 +25,6 @@ object ViewDebugManager {
 
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             super.onActivityCreated(p0, p1)
-            currentActivity = p0
             activities.add(0, p0)
             uiControl.onActivityChange(WeakReference(p0))
         }
@@ -40,16 +39,18 @@ object ViewDebugManager {
         override fun onActivityDestroyed(p0: Activity) {
             super.onActivityDestroyed(p0)
             activities.remove(p0)
-            // 所有页面退出后直接隐藏
-            if (activities.isEmpty() && !showOnOtherApplication) {
-                uiControl.close()
-            }
         }
 
         override fun onActivityStopped(p0: Activity) {
             super.onActivityStopped(p0)
-            // 应用后台，隐藏
-            if (p0 == currentActivity && !showOnOtherApplication) {
+        }
+
+        override fun onProcessResume() {
+            uiControl.show()
+        }
+
+        override fun onProcessStop() {
+            if (!showOnOtherApplication) {
                 uiControl.close()
             }
         }
@@ -89,5 +90,15 @@ object ViewDebugManager {
      */
     fun overOtherApplication(enable: Boolean) {
         this.showOnOtherApplication = enable
+        // 更新状态
+        if (enable) {
+            uiControl.show()
+        } else {
+            if (activityLifecycleCallbacks.processIsFront) {
+                uiControl.show()
+            } else {
+                uiControl.close()
+            }
+        }
     }
 }
