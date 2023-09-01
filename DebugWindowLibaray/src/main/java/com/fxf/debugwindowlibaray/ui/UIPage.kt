@@ -22,20 +22,20 @@ abstract class UIPage {
     var isOnShow = false
         private set
 
-    protected lateinit var tabView: View
-    protected lateinit var contentView: ViewGroup
+    lateinit var tabView: View
+    lateinit var contentView: ViewGroup
     val ctx by lazy { tabView.context }
 
     // 当前activity
     protected var hostActivity: WeakReference<Activity>? = null
-    protected fun createTabView(ctx: Context, parent: ViewGroup): View {
+    fun createTabView(ctx: Context, parent: ViewGroup): View {
         if (!this::tabView.isInitialized) {
             tabView = onCreateTabView(ctx, parent)
         }
         return tabView
     }
 
-    protected open fun createContentView(ctx: Context): View {
+    open fun createContentView(ctx: Context): View {
         if (!this::contentView.isInitialized) {
             contentView = ConstraintLayout(ctx)
             contentView.layoutParams = ViewGroup.LayoutParams(
