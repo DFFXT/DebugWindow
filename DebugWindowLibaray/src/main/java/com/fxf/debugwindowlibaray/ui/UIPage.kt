@@ -8,7 +8,6 @@ import android.graphics.Color
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.annotation.CallSuper
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -23,20 +22,20 @@ abstract class UIPage {
     var isOnShow = false
         private set
 
-    lateinit var tabView: View
-    lateinit var contentView: ViewGroup
+    protected lateinit var tabView: View
+    protected lateinit var contentView: ViewGroup
     val ctx by lazy { tabView.context }
 
     // 当前activity
-    internal var hostActivity: WeakReference<Activity>? = null
-    internal fun createTabView(ctx: Context, parent: ViewGroup): View {
+    protected var hostActivity: WeakReference<Activity>? = null
+    protected fun createTabView(ctx: Context, parent: ViewGroup): View {
         if (!this::tabView.isInitialized) {
             tabView = onCreateTabView(ctx, parent)
         }
         return tabView
     }
 
-    internal fun createContentView(ctx: Context): View {
+    protected open fun createContentView(ctx: Context): View {
         if (!this::contentView.isInitialized) {
             contentView = ConstraintLayout(ctx)
             contentView.layoutParams = ViewGroup.LayoutParams(
