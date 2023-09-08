@@ -70,7 +70,7 @@ class ViewDebugManager {
         }
     }
 
-    fun addPage(page: UIPage, index: Int = 0) {
+    fun addPage(page: UIPage, index: Int = uiControl.getAllPage().size) {
         uiControl.loadPage(page, index)
     }
 

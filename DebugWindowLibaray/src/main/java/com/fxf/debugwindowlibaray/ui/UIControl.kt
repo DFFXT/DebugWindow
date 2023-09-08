@@ -92,6 +92,7 @@ class UIControl(private val ctx: Context) {
         uiControlBinding.layoutControlBar.addView(tabView, 0)
         pages.add(index, page)
     }
+    fun getAllPage(): List<UIPage> = pages
 
     fun switchPage(index: Int) {
         if (pages.isEmpty()) return
