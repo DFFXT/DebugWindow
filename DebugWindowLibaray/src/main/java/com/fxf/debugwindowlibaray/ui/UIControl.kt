@@ -81,6 +81,7 @@ class UIControl(private val ctx: Context) {
      * 加载功能页
      */
     fun loadPage(page: UIPage) {
+        if (pages.contains(page)) return
         val tabView = page.createTabView(ctx, uiControlBinding.layoutControlBar)
         tabView.setOnClickListener {
             switchPage(page)
@@ -127,6 +128,7 @@ class UIControl(private val ctx: Context) {
     }
 
     fun removePage(p: UIPage) {
+        if (!pages.contains(p)) return
         uiControlBinding.layoutControlBar.removeView(p.tabView)
         if (p.isOnShow) {
             contentBinding.layoutContent.removeView(p.contentView)

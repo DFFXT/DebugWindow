@@ -16,7 +16,7 @@ import java.util.LinkedList
  * 1. 查看层级信息
  * 2. 查看图片信息
  */
-object ViewDebugManager {
+class ViewDebugManager {
     // 是否支持应用外显示
     private var showOnOtherApplication = false
     private val activityLifecycleCallbacks = object : ActivityStackCallback() {
@@ -72,11 +72,11 @@ object ViewDebugManager {
         uiControl.removePage(page)
     }
 
-    /*fun destroy() {
+    fun destroy() {
         app.unregisterActivityLifecycleCallbacks(activityLifecycleCallbacks)
         // app 持有不用销毁
         uiControl.destroy()
-    }*/
+    }
 
     /**
      * 更新控制栏显示图标
