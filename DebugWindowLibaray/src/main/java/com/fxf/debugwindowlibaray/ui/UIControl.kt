@@ -80,7 +80,7 @@ class UIControl(private val ctx: Context) {
     /**
      * 加载功能页
      */
-    fun loadPage(page: UIPage, index: Int = 0) {
+    fun loadPage(page: UIPage, index: Int = pages.size) {
         if (pages.contains(page)) return
         val tabView = page.createTabView(ctx, uiControlBinding.layoutControlBar)
         tabView.setOnClickListener {
