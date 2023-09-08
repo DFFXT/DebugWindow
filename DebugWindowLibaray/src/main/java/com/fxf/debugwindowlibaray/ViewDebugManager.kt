@@ -57,15 +57,29 @@ class ViewDebugManager {
     }
     private lateinit var app: Application
     private val uiControl by lazy { UIControl(app) }
-    fun init(app: Application) {
+
+    /**
+     * @param defaultPage 默认页面，为了方便默认是[EmptyPage]
+     */
+    fun init(app: Application, defaultPage: UIPage? = EmptyPage()) {
         if (this::app.isInitialized) return
         this.app = app
         app.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
-        addPage(EmptyPage())
+        if (defaultPage != null) {
+            addPage(defaultPage)
+        }
     }
 
-    fun addPage(page: UIPage) {
-        uiControl.loadPage(page)
+    fun addPage(page: UIPage, index: Int = 0) {
+        uiControl.loadPage(page, index)
+    }
+
+    fun switchPage(index: Int) {
+        uiControl.switchPage(index)
+    }
+
+    fun switchPage(uiPage: UIPage) {
+        uiControl.switchPage(uiPage)
     }
 
     fun removePage(page: UIPage) {

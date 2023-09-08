@@ -80,7 +80,7 @@ class UIControl(private val ctx: Context) {
     /**
      * 加载功能页
      */
-    fun loadPage(page: UIPage) {
+    fun loadPage(page: UIPage, index: Int = 0) {
         if (pages.contains(page)) return
         val tabView = page.createTabView(ctx, uiControlBinding.layoutControlBar)
         tabView.setOnClickListener {
@@ -90,17 +90,31 @@ class UIControl(private val ctx: Context) {
             page.onHostActivityChange(it)
         }
         uiControlBinding.layoutControlBar.addView(tabView, 0)
-        pages.add(0, page)
+        pages.add(index, page)
+    }
+
+    fun switchPage(index: Int) {
+        if (pages.isEmpty()) return
+        val realIndex = if (index < 0) {
+            0
+        } else if (index > pages.size) {
+            pages.size - 1
+        } else {
+            index
+        }
+        switchPage(pages[realIndex])
     }
 
     /**
-     * 切换为当前显示的page并移除其他page
+     * 切换为当前显示的page并隐藏其他page
+     * @param delegate 需要显示的page，必须是已经加载的page
      */
-    private fun switchPage(delegate: UIPage) {
+    fun switchPage(delegate: UIPage) {
         if (!Settings.canDrawOverlays(ctx)) {
             // Logger.e("UIControl", "no overlay permission")
             return
         }
+        if (!pages.contains(delegate)) throw IllegalStateException("page not load")
         if (!delegate.isOnShow) {
             contentBinding.layoutContent.addView(delegate.createContentView(ctx))
             delegate.onShow()
