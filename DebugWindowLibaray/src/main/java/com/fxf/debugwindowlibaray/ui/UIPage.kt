@@ -113,7 +113,7 @@ abstract class UIPage {
                 marginEnd = ctx.resources.getDimensionPixelOffset(R.dimen.view_debug_ui_control_button_margin)
             }
             setImageResource(getTabIcon())
-            imageTintList = ColorStateList.valueOf(Color.WHITE)
+            // imageTintList = ColorStateList.valueOf(Color.WHITE)
             enablePress()
             enableSelect()
         }
