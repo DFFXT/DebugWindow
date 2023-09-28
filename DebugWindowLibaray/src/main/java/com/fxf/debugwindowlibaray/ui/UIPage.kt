@@ -57,6 +57,7 @@ abstract class UIPage {
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
 
+        container.setBackgroundColor(ctx.getColor(R.color.debug_window_dialog_background))
         container.addView(dialogView)
         val lp = dialogView.layoutParams as? ConstraintLayout.LayoutParams
         if (lp != null) {

@@ -6,6 +6,6 @@ import com.fxf.debugwindowlibaray.ViewDebugManager
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        ViewDebugManager.init(this)
+        ViewDebugManager().init(this)
     }
 }
