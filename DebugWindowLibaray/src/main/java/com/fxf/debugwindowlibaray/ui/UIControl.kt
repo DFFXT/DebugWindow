@@ -49,7 +49,7 @@ class UIControl(private val ctx: Context) {
         var contentLp = contentBinding.root.layoutParams
         if (contentLp == null) {
             contentLp = getLayoutParams()
-            contentLp.width = ctx.resources.displayMetrics.widthPixels
+            contentLp.width = WindowManager.LayoutParams.MATCH_PARENT
             contentLp.height = WindowManager.LayoutParams.MATCH_PARENT
             contentLp.flags = contentLp.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         }
@@ -154,10 +154,7 @@ class UIControl(private val ctx: Context) {
     }
 
     private fun getLayoutParams(): WindowManager.LayoutParams {
-        val lp = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-        )
+        val lp = WindowManager.LayoutParams()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {
@@ -169,12 +166,6 @@ class UIControl(private val ctx: Context) {
         lp.gravity = Gravity.END or Gravity.TOP
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT
-        lp.windowAnimations = -1
-        WindowManager.LayoutParams::class.java.getDeclaredField("privateFlags").apply {
-            isAccessible = true
-            val flag = get(lp) as Int
-            set(lp, flag or 0x00000040)
-        }
         return lp
     }
 
