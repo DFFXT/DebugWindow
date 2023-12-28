@@ -1,6 +1,7 @@
 package com.fxf.debugwindowlibaray.util
 
 import android.content.res.Resources
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -19,13 +20,17 @@ internal fun View.setSize(width: Int? = null, height: Int? = null) {
 }
 
 fun View.enablePress() {
-    foreground =
-        AppCompatResources.getDrawable(context, R.drawable.view_debug_common_press_foreground)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        foreground =
+            AppCompatResources.getDrawable(context, R.drawable.view_debug_common_press_foreground)
+    }
 }
 
 fun View.enableSelect() {
-    foreground =
-        AppCompatResources.getDrawable(context, R.drawable.view_debug_common_selected_foreground)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        foreground =
+            AppCompatResources.getDrawable(context, R.drawable.view_debug_common_selected_foreground)
+    }
     /*val d = StateListDrawable()
     val pd = AppCompatResources.getDrawable(context, drawableId)!!.mutate()
     pd.setTint(resources.getColor(R.color.view_debug_common_selected_color))
@@ -35,25 +40,7 @@ fun View.enableSelect() {
     background = d*/
 }
 
-class ViewDebugInfo(
-    val layoutId: Int?,
-) {
-    fun getLayoutName(res: Resources): String? {
-        layoutId ?: return null
-        if (layoutId > 0) {
-            return res.getResourceEntryName(layoutId)
-        }
-        return null
-    }
 
-    fun getLayoutTypeAndName(res: Resources): String? {
-        layoutId ?: return null
-        if (layoutId > 0) {
-            return res.getResourceTypeName(layoutId) + "/" + res.getResourceEntryName(layoutId)
-        }
-        return null
-    }
-}
 
 internal fun adjustOrientation(rootView: View) {
     val ctx = rootView.context

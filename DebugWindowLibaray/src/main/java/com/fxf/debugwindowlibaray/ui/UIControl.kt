@@ -12,6 +12,7 @@ import android.view.WindowManager
 import com.fxf.debugwindowlibaray.databinding.LayoutViewDebugUiControlBinding
 import com.fxf.debugwindowlibaray.databinding.ViewDebugLayoutMainContentBinding
 import java.lang.ref.WeakReference
+import java.util.logging.Logger
 
 /**
  * ui 控制
@@ -29,7 +30,7 @@ class UIControl(private val ctx: Context) {
         ViewDebugLayoutMainContentBinding.inflate(LayoutInflater.from(ctx))
     }
     private val pages = ArrayList<UIPage>()
-    private val wm by lazy { ctx.getSystemService(WindowManager::class.java) }
+    private val wm by lazy { ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager }
 
     private var hostActivity: WeakReference<Activity>? = null
 
@@ -40,10 +41,7 @@ class UIControl(private val ctx: Context) {
         private set
 
     fun show() {
-        if (!Settings.canDrawOverlays(ctx)) {
-            // Logger.e("UIControl", "no overlay permission")
-            return
-        }
+        if (!hasOverlayPermission(ctx)) return
         if (isShown) return
         // 添加内容区域
         var contentLp = contentBinding.root.layoutParams
@@ -111,10 +109,9 @@ class UIControl(private val ctx: Context) {
      * @param delegate 需要显示的page，必须是已经加载的page
      */
     fun switchPage(delegate: UIPage) {
-        if (!Settings.canDrawOverlays(ctx)) {
-            // Logger.e("UIControl", "no overlay permission")
-            return
-        }
+        // api 23后需要动态申请，之前默认开启
+        if (!hasOverlayPermission(ctx)) return
+
         if (!pages.contains(delegate)) throw IllegalStateException("page not load")
         if (!delegate.isOnShow) {
             contentBinding.layoutContent.addView(delegate.createContentView(ctx))
@@ -140,6 +137,16 @@ class UIControl(private val ctx: Context) {
             }
             wm.updateViewLayout(contentBinding.root, lp)
         }
+    }
+
+    private fun hasOverlayPermission(ctx: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(ctx)) {
+                // Logger.e("UIControl", "no overlay permission")
+                return false
+            }
+        }
+        return true
     }
 
     fun removePage(p: UIPage) {
@@ -182,7 +189,7 @@ class UIControl(private val ctx: Context) {
         lp.gravity = config.gravity
         lp.x = config.offsetX
         lp.y = config.offsetY
-        if (uiControlBinding.root.isAttachedToWindow) {
+        if (hasOverlayPermission(ctx)) {
             wm.updateViewLayout(uiControlBinding.root, lp)
         }
     }
