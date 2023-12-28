@@ -20,25 +20,20 @@ class ViewDebugManager {
     // 是否支持应用外显示
     private var showOnOtherApplication = false
     private val activityLifecycleCallbacks = object : ActivityStackCallback() {
-        private val activities = LinkedList<Activity>()
-        private var currentActivity: Activity? = null
 
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             super.onActivityCreated(p0, p1)
-            activities.add(0, p0)
             uiControl.onActivityChange(WeakReference(p0))
         }
 
         override fun onActivityResumed(p0: Activity) {
             super.onActivityResumed(p0)
-            currentActivity = p0
             uiControl.onActivityChange(WeakReference(p0))
             uiControl.show()
         }
 
         override fun onActivityDestroyed(p0: Activity) {
             super.onActivityDestroyed(p0)
-            activities.remove(p0)
         }
 
         override fun onActivityStopped(p0: Activity) {
