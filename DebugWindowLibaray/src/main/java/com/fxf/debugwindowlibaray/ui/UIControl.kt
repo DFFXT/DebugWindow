@@ -190,7 +190,11 @@ class UIControl(private val ctx: Context) {
         lp.x = config.offsetX
         lp.y = config.offsetY
         if (hasOverlayPermission(ctx)) {
-            wm.updateViewLayout(uiControlBinding.root, lp)
+            try {
+                wm.updateViewLayout(uiControlBinding.root, lp)
+            } catch (_: Throwable) {
+
+            }
         }
     }
 

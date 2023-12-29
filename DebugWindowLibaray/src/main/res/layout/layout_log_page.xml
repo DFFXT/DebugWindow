@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    android:paddingTop="@dimen/view_debug_control_ui_status_bar_height"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <View
+        android:layout_width="0px"
+        android:layout_height="0px"
+        android:background="@color/view_debug_image_detail_title_bar_bg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
+
+    <Spinner
+        android:id="@+id/spinner_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="0px"
+        android:background="@drawable/view_debug_common_rect_stroke_1dp"
+        android:spinnerMode="dropdown"
+        android:entries="@array/log_level"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintEnd_toStartOf="@id/edt_filter"
+        app:layout_constraintTop_toTopOf="@id/edt_filter"
+        app:layout_constraintBottom_toBottomOf="@id/edt_filter"/>
+
+    <EditText
+        android:id="@+id/edt_filter"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        app:layout_constraintWidth_max="300dp"
+        app:layout_constraintStart_toEndOf="@id/spinner_tag"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:hint="日志过滤"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        tools:listitem="@layout/item_log"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/edt_filter"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
