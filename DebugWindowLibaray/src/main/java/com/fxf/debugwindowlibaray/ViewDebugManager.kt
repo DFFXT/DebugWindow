@@ -7,6 +7,7 @@ import com.fxf.debugwindowlibaray.ui.EmptyPage
 import com.fxf.debugwindowlibaray.ui.UIControl
 import com.fxf.debugwindowlibaray.ui.UIPage
 import com.fxf.debugwindowlibaray.ui.UiControlConfig
+import com.fxf.debugwindowlibaray.ui.pages.LogPage
 import java.lang.ref.WeakReference
 import java.util.LinkedList
 
@@ -63,6 +64,7 @@ class ViewDebugManager {
         if (defaultPage != null) {
             addPage(defaultPage)
         }
+        addPage(LogPage())
     }
 
     fun addPage(page: UIPage, index: Int = uiControl.getAllPage().size) {

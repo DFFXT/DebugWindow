@@ -3,8 +3,6 @@ package com.fxf.debugwindowlibaray.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +20,8 @@ abstract class UIPage {
     var isOnShow = false
         private set
 
+    var isDestroy = false
+        private set
     lateinit var tabView: View
     lateinit var contentView: ViewGroup
     val ctx by lazy { tabView.context }
@@ -102,7 +102,12 @@ abstract class UIPage {
         this.hostActivity = hostActivity
     }
 
+    /**
+     * 是否允许点击
+     */
     open fun enableTouch(): Boolean = true
+
+    // 是否允许获取焦点，比如弹出输入法
     open fun enableFocus(): Boolean = false
     open fun onCreateTabView(ctx: Context, parent: ViewGroup): View {
         return AppCompatImageView(ctx).apply {
@@ -139,5 +144,6 @@ abstract class UIPage {
 
     @CallSuper
     open fun onDestroy() {
+        isDestroy = true
     }
 }

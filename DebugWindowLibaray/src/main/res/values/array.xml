@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="log_level">
+        <item>V</item>
+        <item>D</item>
+        <item>I</item>
+        <item>W</item>
+        <item>E</item>
+    </string-array>
+</resources>
