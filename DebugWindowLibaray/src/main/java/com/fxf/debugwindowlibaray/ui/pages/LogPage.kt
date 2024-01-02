@@ -155,15 +155,15 @@ class LogPage : UIPage() {
         return false
     }
     private fun setFilter(filterLevel: Int = this.filterLevel, filter: CharSequence? = this.filter) {
-        this.filter = filter
-        this.filterLevel = filterLevel
-        logList.clear()
-        originLog.forEach {
-            if (canShow(it.level, it.text)) {
-                logList.add(it)
-            }
-        }
         binding.root.post {
+            this.filter = filter
+            this.filterLevel = filterLevel
+            logList.clear()
+            originLog.forEach {
+                if (canShow(it.level, it.text)) {
+                    logList.add(it)
+                }
+            }
             adapter.notifyDataSetChanged()
         }
     }
