@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/view_debug_control_ui_status_bar_height"
+    android:background="@color/debug_window_white"
     xmlns:tools="http://schemas.android.com/tools">
 
     <View
@@ -14,10 +15,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/spinner_tag"
         app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
-
+    <ImageView
+        android:id="@+id/iv_scrollToBottom"
+        android:layout_width="80dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:src="@color/debug_window_white"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintEnd_toStartOf="@id/iv_hideKeyboard"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
+    <ImageView
+        android:id="@+id/iv_hideKeyboard"
+        android:layout_width="80dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:src="@color/debug_window_white"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintEnd_toStartOf="@id/spinner_tag"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
     <Spinner
         android:id="@+id/spinner_tag"
-        android:layout_width="wrap_content"
+        android:layout_width="60dp"
         android:layout_height="0px"
         android:background="@drawable/view_debug_common_rect_stroke_1dp"
         android:spinnerMode="dropdown"
@@ -31,7 +49,7 @@
     <EditText
         android:id="@+id/edt_filter"
         android:layout_width="0px"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:maxLines="1"
         app:layout_constraintWidth_max="300dp"
         app:layout_constraintStart_toEndOf="@id/spinner_tag"

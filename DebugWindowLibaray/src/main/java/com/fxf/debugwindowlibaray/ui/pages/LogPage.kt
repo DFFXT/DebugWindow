@@ -1,14 +1,18 @@
 package com.fxf.debugwindowlibaray.ui.pages
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
-import androidx.core.widget.addTextChangedListener
+import androidx.annotation.UiThread
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fxf.debugwindowlibaray.R
 import com.fxf.debugwindowlibaray.databinding.ItemLogBinding
@@ -16,6 +20,8 @@ import com.fxf.debugwindowlibaray.databinding.LayoutLogPageBinding
 import com.fxf.debugwindowlibaray.ui.UIPage
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.concurrent.thread
 
 /**
@@ -27,13 +33,19 @@ import kotlin.concurrent.thread
  */
 class LogPage : UIPage() {
 
-    companion object{
-        private const val MAX_LOG_SIZE = 10000
+    companion object {
+        var MAX_LOG_SIZE = 10000
+        var autoStartLogcat = true
     }
+
     private lateinit var binding: LayoutLogPageBinding
     private val logList = ArrayList<LogItem>()
     private val originLog = ArrayList<LogItem>()
     private var logcatEnable = true
+
+    private var autoScrollToBottom = true
+
+    private val handler = Handler(Looper.getMainLooper())
 
     private val tagSet by lazy {
         ctx.resources.getStringArray(R.array.log_level).toSet()
@@ -46,6 +58,15 @@ class LogPage : UIPage() {
         this['W'] = Log.WARN
         this['E'] = Log.ERROR
     }
+
+    private val levelMapToChar = HashMap<Int, Char>().apply {
+        this[Log.VERBOSE] = 'V'
+        this[Log.DEBUG] = 'D'
+        this[Log.INFO] = 'I'
+        this[Log.WARN] = 'W'
+        this[Log.ERROR] = 'E'
+    }
+    var dateFormat = SimpleDateFormat("MM-DD'T'HH:mm:ss.SSS", Locale.getDefault())
 
     private var filter: CharSequence? = null
 
@@ -80,17 +101,33 @@ class LogPage : UIPage() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
-
         }
+        binding.rvList.itemAnimator = null
         binding.rvList.adapter = adapter
-        binding.edtFilter.setOnKeyListener { _, keyCode, _ ->
+        binding.rvList.setOnTouchListener { _, _ ->
+            autoScrollToBottom = false
+            return@setOnTouchListener false
+        }
+        binding.edtFilter.setOnKeyListener { v, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 setFilter(filter = binding.edtFilter.text)
+                hideKeyboard(v)
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
         }
-        startLogcat()
+        binding.ivScrollToBottom.setOnClickListener {
+            autoScrollToBottom = true
+            if (logList.isNotEmpty()) {
+                binding.rvList.scrollToPosition(logList.size - 1)
+            }
+        }
+        binding.ivHideKeyboard.setOnClickListener {
+            hideKeyboard(it)
+        }
+        if (autoStartLogcat) {
+            startLogcat()
+        }
         return binding.root
     }
 
@@ -117,7 +154,7 @@ class LogPage : UIPage() {
             val process = Runtime.getRuntime().exec("logcat")
             val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
             while (!isDestroy && logcatEnable) {
-                val line = bufferedReader.readLine()
+                val line = bufferedReader.readLine() ?: continue
                 // 02-02 01:44:09.514 E
                 // 12-29 08:23:37.585 29360 29406 I
                 binding.root.post {
@@ -132,28 +169,47 @@ class LogPage : UIPage() {
     }
 
     fun appendText(level: Int, text: String) {
-        val item = LogItem(level, text)
-        if (originLog.size > MAX_LOG_SIZE) {
-            originLog.clear()
+        val date = dateFormat.format(System.currentTimeMillis())
+        handler.post {
+            appendInUiThread(level, "$date $text")
         }
-        originLog.add(item)
+    }
+
+    @UiThread
+    private fun appendInUiThread(level: Int, text: String) {
+        if (logList.size > MAX_LOG_SIZE) {
+            logList.clear()
+            adapter.notifyDataSetChanged()
+        }
+        // originLog.add(item)
         if (canShow(level, text)) {
+            val item = LogItem(level, levelMapToChar[level].toString() + " " + text)
             logList.add(item)
+            if (::binding.isInitialized) {
+                val lm = binding.rvList.layoutManager as LinearLayoutManager
+                if (autoScrollToBottom) {
+                    binding.rvList.scrollToPosition(logList.size - 1)
+                }
+            }
             adapter.notifyItemInserted(logList.size - 1)
         }
     }
 
     private fun hideKeyboard(view: View) {
-
+        view.post {
+            val manager = view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            manager.hideSoftInputFromWindow(view.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+        }
     }
 
     private fun canShow(level: Int, text: String): Boolean {
         if (level >= filterLevel) {
-            if (filter == null) return true
+            if (filter.isNullOrEmpty()) return true
             return text.contains(filter!!)
         }
         return false
     }
+
     private fun setFilter(filterLevel: Int = this.filterLevel, filter: CharSequence? = this.filter) {
         binding.root.post {
             this.filter = filter

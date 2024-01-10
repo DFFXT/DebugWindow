@@ -1,5 +1,7 @@
 package com.fxf.debugwindowlibaray.ui
 
+import android.content.Context
+import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +17,7 @@ import com.fxf.debugwindowlibaray.R
  */
 class TouchDragWrapper(private val moveTarget: View, touchTarget: View) {
     private val ctx = moveTarget.context
-    private val wm = ctx.getSystemService(WindowManager::class.java)
+    private val wm = ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
     init {
         object : BaseDragHelper() {
@@ -24,18 +26,24 @@ class TouchDragWrapper(private val moveTarget: View, touchTarget: View) {
             }
 
             override fun longOnClick(x: Float, y: Float): Boolean {
-                moveTarget.foreground = AppCompatResources.getDrawable(ctx, R.drawable.view_debug_common_rect_stroke_1dp)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    moveTarget.foreground = AppCompatResources.getDrawable(ctx, R.drawable.view_debug_common_rect_stroke_1dp)
+                }
                 return false
             }
 
             override fun longClickUpMoved(x: Float, y: Float) {
                 super.longClickUpMoved(x, y)
-                moveTarget.foreground = null
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    moveTarget.foreground = null
+                }
             }
 
             override fun longClickUpNoMove(x: Float, y: Float) {
                 super.longClickUpNoMove(x, y)
-                moveTarget.foreground = null
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    moveTarget.foreground = null
+                }
             }
         }.attachToView(touchTarget)
     }
@@ -82,8 +90,6 @@ class TouchDragWrapper(private val moveTarget: View, touchTarget: View) {
         if (lp.y > maxBottom) {
             lp.y = maxBottom
         }
-        if (moveTarget.isAttachedToWindow) {
-            wm.updateViewLayout(moveTarget, lp)
-        }
+        wm.updateViewLayout(moveTarget, lp)
     }
 }

@@ -3,6 +3,8 @@ package com.fxf.debugwindowlibaray.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.graphics.drawable.LayerDrawable
+import android.os.Build
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -57,7 +59,11 @@ abstract class UIPage {
             ViewGroup.LayoutParams.MATCH_PARENT,
         )
 
-        container.setBackgroundColor(ctx.getColor(R.color.debug_window_dialog_background))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            container.setBackgroundColor(ctx.getColor(R.color.debug_window_dialog_background))
+        } else {
+            container.setBackgroundColor(ctx.resources.getColor(R.color.debug_window_dialog_background))
+        }
         container.addView(dialogView)
         val lp = dialogView.layoutParams as? ConstraintLayout.LayoutParams
         if (lp != null) {
