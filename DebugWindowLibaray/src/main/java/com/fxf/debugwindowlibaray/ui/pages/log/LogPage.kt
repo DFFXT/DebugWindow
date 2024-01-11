@@ -1,4 +1,4 @@
-package com.fxf.debugwindowlibaray.ui.pages
+package com.fxf.debugwindowlibaray.ui.pages.log
 
 import android.content.Context
 import android.os.Handler
@@ -31,7 +31,7 @@ import kotlin.concurrent.thread
  * 3. 支持显示当前进程日志和设备日志
  * 4. 支持设置显示日志条数
  */
-class LogPage : UIPage() {
+open class LogPage : UIPage() {
 
     companion object {
         var MAX_LOG_SIZE = 10000
@@ -93,6 +93,11 @@ class LogPage : UIPage() {
 
     override fun onCreateContentView(ctx: Context, parent: ViewGroup): View {
         binding = LayoutLogPageBinding.inflate(LayoutInflater.from(ctx), parent, false)
+        binding.ivClear.setOnClickListener {
+            adapter.notifyItemRangeRemoved(0, logList.size)
+            logList.clear()
+        }
+
         binding.spinnerTag.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 val filter = ctx.resources.getStringArray(R.array.log_level)[p2]
@@ -124,6 +129,16 @@ class LogPage : UIPage() {
         }
         binding.ivHideKeyboard.setOnClickListener {
             hideKeyboard(it)
+        }
+        binding.ivInputClear.setOnClickListener {
+            binding.edtFilter.text = null
+        }
+        binding.ivInputHistory.setOnClickListener {
+            val dialog = LogHistoryDialog(this)
+            dialog.show {
+                binding.edtFilter.setText(it)
+                setFilter(filter = it)
+            }
         }
         if (autoStartLogcat) {
             startLogcat()

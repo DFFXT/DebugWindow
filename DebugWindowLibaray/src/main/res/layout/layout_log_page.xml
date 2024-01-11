@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     android:paddingTop="@dimen/view_debug_control_ui_status_bar_height"
-    android:background="@color/debug_window_white"
     xmlns:tools="http://schemas.android.com/tools">
 
     <View
@@ -15,21 +14,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/spinner_tag"
         app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
-    <ImageView
+
+    <TextView
+        android:id="@+id/iv_clear"
+        android:layout_width="80dp"
+        android:layout_height="0dp"
+        android:src="@color/debug_window_white"
+        android:text="@string/log_page_clear"
+        android:gravity="center"
+        android:background="@drawable/view_debug_padding_10"
+        android:textColor="@color/debug_window_black"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintEnd_toStartOf="@id/iv_scrollToBottom"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
+    <TextView
         android:id="@+id/iv_scrollToBottom"
         android:layout_width="80dp"
         android:layout_height="0dp"
-        android:padding="10dp"
         android:src="@color/debug_window_white"
+        android:text="@string/log_page_to_bottom"
+        android:gravity="center"
+        android:background="@drawable/view_debug_padding_10"
+        android:textColor="@color/debug_window_black"
         app:layout_constraintTop_toTopOf="@id/spinner_tag"
         app:layout_constraintEnd_toStartOf="@id/iv_hideKeyboard"
         app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
-    <ImageView
+    <TextView
         android:id="@+id/iv_hideKeyboard"
         android:layout_width="80dp"
         android:layout_height="0dp"
-        android:padding="10dp"
-        android:src="@color/debug_window_white"
+        android:text="@string/log_page_hide_board"
+        android:gravity="center"
+        android:textColor="@color/debug_window_black"
+        android:background="@drawable/view_debug_padding_10"
         app:layout_constraintTop_toTopOf="@id/spinner_tag"
         app:layout_constraintEnd_toStartOf="@id/spinner_tag"
         app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
@@ -50,12 +67,37 @@
         android:id="@+id/edt_filter"
         android:layout_width="0px"
         android:layout_height="50dp"
+        android:layout_marginTop="28dp"
+        android:hint="日志过滤"
         android:maxLines="1"
-        app:layout_constraintWidth_max="300dp"
-        app:layout_constraintStart_toEndOf="@id/spinner_tag"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/spinner_tag"
         app:layout_constraintTop_toTopOf="parent"
-        android:hint="日志过滤"/>
+        app:layout_constraintWidth_max="300dp" />
+
+    <TextView
+        android:id="@+id/iv_input_clear"
+        android:layout_width="80dp"
+        android:layout_height="0dp"
+        android:text="@string/log_page_delete"
+        android:gravity="center"
+        android:textColor="@color/debug_window_black"
+        android:background="@drawable/view_debug_padding_10"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintStart_toEndOf="@id/edt_filter"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
+
+    <TextView
+        android:id="@+id/iv_input_history"
+        android:layout_width="80dp"
+        android:layout_height="0dp"
+        android:text="@string/log_page_history"
+        android:gravity="center"
+        android:textColor="@color/debug_window_black"
+        android:background="@drawable/view_debug_padding_10"
+        app:layout_constraintTop_toTopOf="@id/spinner_tag"
+        app:layout_constraintStart_toEndOf="@id/iv_input_clear"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_tag"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"

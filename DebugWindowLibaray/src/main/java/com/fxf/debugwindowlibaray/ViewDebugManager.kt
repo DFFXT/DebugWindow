@@ -7,9 +7,7 @@ import com.fxf.debugwindowlibaray.ui.EmptyPage
 import com.fxf.debugwindowlibaray.ui.UIControl
 import com.fxf.debugwindowlibaray.ui.UIPage
 import com.fxf.debugwindowlibaray.ui.UiControlConfig
-import com.fxf.debugwindowlibaray.ui.pages.LogPage
 import java.lang.ref.WeakReference
-import java.util.LinkedList
 
 /**
  * 视图调试工具

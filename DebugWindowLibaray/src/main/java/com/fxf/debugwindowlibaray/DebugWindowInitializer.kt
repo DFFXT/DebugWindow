@@ -6,8 +6,12 @@ import androidx.startup.Initializer
 import java.util.Collections
 
 open class DebugWindowInitializer : Initializer<DebugWindowInitializer> {
+    companion object {
+        lateinit var application: Application
+    }
     override fun create(context: Context): DebugWindowInitializer {
-        ViewDebugManager().init(context.applicationContext as Application)
+        application = context.applicationContext as Application
+        ViewDebugManager().init(application)
         return this
     }
 

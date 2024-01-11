@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:bottom="@dimen/view_debug_log_tab_padding"
+        android:left="@dimen/view_debug_log_tab_padding"
+        android:right="@dimen/view_debug_log_tab_padding"
+        android:top="@dimen/view_debug_log_tab_padding">
+        <shape>
+            <solid android:color="@color/debug_window_white" />
+        </shape>
+
+    </item>
+</layer-list>

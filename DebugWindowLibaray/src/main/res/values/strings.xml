@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">DebugWindow</string>
+    <string name="log_page_to_bottom">到底部</string>
+    <string name="log_page_hide_board">收键盘</string>
+    <string name="log_page_clear">清空</string>
+    <string name="log_page_delete">删除</string>
+    <string name="log_page_history">历史</string>
 </resources>
