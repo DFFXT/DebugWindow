@@ -68,7 +68,7 @@ open class LogPage : UIPage() {
     }
     var dateFormat = SimpleDateFormat("MM-DD'T'HH:mm:ss.SSS", Locale.getDefault())
 
-    private var filter: CharSequence? = null
+    private var filter: String? = null
 
     private var filterLevel: Int = Log.VERBOSE
 
@@ -115,7 +115,7 @@ open class LogPage : UIPage() {
         }
         binding.edtFilter.setOnKeyListener { v, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                setFilter(filter = binding.edtFilter.text)
+                setFilter(filter = binding.edtFilter.text.toString())
                 hideKeyboard(v)
                 return@setOnKeyListener true
             }
@@ -139,6 +139,7 @@ open class LogPage : UIPage() {
                 dialog.close()
                 binding.edtFilter.setText(it)
                 setFilter(filter = it)
+                hideKeyboard(binding.ivHideKeyboard)
             }
         }
         if (autoStartLogcat) {
@@ -226,7 +227,7 @@ open class LogPage : UIPage() {
         return false
     }
 
-    private fun setFilter(filterLevel: Int = this.filterLevel, filter: CharSequence? = this.filter) {
+    private fun setFilter(filterLevel: Int = this.filterLevel, filter: String? = this.filter) {
         if (filter != this.filter && !filter.isNullOrEmpty()) {
             LogHistoryDialog.saveHistoryItem(filter.toString())
         }

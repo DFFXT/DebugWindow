@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.viewdebug.ui.dialog.BaseDialog
 import com.fxf.debugwindowlibaray.DebugWindowInitializer
@@ -69,6 +70,8 @@ internal class LogHistoryDialog(uiPage: UIPage) : BaseDialog(uiPage) {
 
         private val logFileName = "dw_log_history.txt"
         fun saveHistoryItem(string: String) {
+            Toast.makeText(DebugWindowInitializer.application as Context, "->>"+string, Toast.LENGTH_LONG).show()
+
             val index = history.indexOf(string)
             if (index == 0) return
             if (index > 0) {
