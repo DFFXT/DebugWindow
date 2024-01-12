@@ -16,13 +16,13 @@ import java.util.LinkedList
 
 internal class LogHistoryDialog(uiPage: UIPage) : BaseDialog(uiPage) {
 
-    private lateinit var callback : (item: String)->Unit
+    private lateinit var callback: (item: String) -> Unit
+
     private inner class VH(val binding: DwLogHistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String) {
             binding.root.text = item
             binding.root.setOnClickListener {
                 callback.invoke(item)
-                saveHistoryItem(item)
             }
         }
     }
@@ -36,8 +36,8 @@ internal class LogHistoryDialog(uiPage: UIPage) : BaseDialog(uiPage) {
                     DwLogHistoryItemBinding.inflate(
                         LayoutInflater.from(parent.context),
                         parent,
-                        false
-                    )
+                        false,
+                    ),
                 )
             }
 
@@ -51,16 +51,19 @@ internal class LogHistoryDialog(uiPage: UIPage) : BaseDialog(uiPage) {
         return binding.root
     }
 
-    fun show(callback:(item: String)->Unit) {
-
+    fun show(callback: (item: String) -> Unit) {
+        this.callback = callback
+        show()
     }
-
 
     companion object {
         private val history by lazy {
-            val log = File(DebugWindowInitializer.application.cacheDir, logFileName).readLines()
+            val file = File(DebugWindowInitializer.application.cacheDir, logFileName)
             val list = LinkedList<String>()
-            list.addAll(log)
+            if (file.exists()) {
+                list.addAll(file.readLines())
+            }
+
             list
         }
 
@@ -74,6 +77,9 @@ internal class LogHistoryDialog(uiPage: UIPage) : BaseDialog(uiPage) {
             history.add(0, string)
             val historyFile = File(DebugWindowInitializer.application.cacheDir, logFileName)
             val outputStream = FileOutputStream(historyFile)
+            if (getHistory().size == 21) {
+                history.removeLast()
+            }
             history.forEachIndexed { index, s ->
                 outputStream.write(s.toByteArray())
                 if (index < history.size - 1) {

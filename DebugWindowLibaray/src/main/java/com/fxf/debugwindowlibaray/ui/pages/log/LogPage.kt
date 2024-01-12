@@ -136,6 +136,7 @@ open class LogPage : UIPage() {
         binding.ivInputHistory.setOnClickListener {
             val dialog = LogHistoryDialog(this)
             dialog.show {
+                dialog.close()
                 binding.edtFilter.setText(it)
                 setFilter(filter = it)
             }
@@ -226,6 +227,9 @@ open class LogPage : UIPage() {
     }
 
     private fun setFilter(filterLevel: Int = this.filterLevel, filter: CharSequence? = this.filter) {
+        if (filter != this.filter && !filter.isNullOrEmpty()) {
+            LogHistoryDialog.saveHistoryItem(filter.toString())
+        }
         binding.root.post {
             this.filter = filter
             this.filterLevel = filterLevel

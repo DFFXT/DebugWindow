@@ -8,6 +8,7 @@
     android:paddingTop="5dp"
     android:paddingEnd="10dp"
     android:paddingBottom="5dp"
+    android:background="@drawable/dw_item_selectable_background"
     android:textColor="@color/debug_window_black"
     android:textSize="@dimen/dw_log_history_item_text_size"
     tools:text="log">

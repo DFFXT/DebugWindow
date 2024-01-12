@@ -8,10 +8,12 @@ import java.util.Collections
 open class DebugWindowInitializer : Initializer<DebugWindowInitializer> {
     companion object {
         lateinit var application: Application
+        var viewDebugManager: ViewDebugManager? = null
     }
     override fun create(context: Context): DebugWindowInitializer {
         application = context.applicationContext as Application
-        ViewDebugManager().init(application)
+        viewDebugManager = ViewDebugManager()
+        viewDebugManager!!.init(application)
         return this
     }
 
