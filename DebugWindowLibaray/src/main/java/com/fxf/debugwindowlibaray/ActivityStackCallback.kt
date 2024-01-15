@@ -9,7 +9,6 @@ import java.lang.ref.WeakReference
  * 应用生命周期监听
  */
 internal open class ActivityStackCallback : ActivityLifecycleCallbacks {
-    var currentActivityRef: WeakReference<Activity>? = null
 
     // 当前进程是否在前台
     var processIsFront = false
@@ -23,7 +22,6 @@ internal open class ActivityStackCallback : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityResumed(p0: Activity) {
-        currentActivityRef = WeakReference(p0)
         if (resumeCount == 0) {
             onProcessResume()
         }

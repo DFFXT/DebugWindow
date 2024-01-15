@@ -8,9 +8,11 @@ import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.ViewManager
 import android.view.WindowManager
 import com.fxf.debugwindowlibaray.databinding.LayoutViewDebugUiControlBinding
 import com.fxf.debugwindowlibaray.databinding.ViewDebugLayoutMainContentBinding
+import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
 import java.lang.ref.WeakReference
 import java.util.logging.Logger
 
@@ -30,49 +32,74 @@ class UIControl(private val ctx: Context) {
         ViewDebugLayoutMainContentBinding.inflate(LayoutInflater.from(ctx))
     }
     private val pages = ArrayList<UIPage>()
-    private val wm by lazy { ctx.getSystemService(Context.WINDOW_SERVICE) as WindowManager }
 
     private var hostActivity: WeakReference<Activity>? = null
 
     private var config: UiControlConfig = UiControlConfig()
 
+    private lateinit var viewManager: ViewManagerExt
+
     // 是否显示
     var isShown = false
         private set
 
+    /**
+     * 切换显示的区域
+     */
+    fun switchViewManager(viewManager: ViewManagerExt) {
+        if (this::viewManager.isInitialized) {
+            try {
+                this.viewManager.removeView(uiControlBinding.root)
+                this.viewManager.removeView(contentBinding.root)
+                viewManager.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
+                viewManager.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
+            } catch (_: IllegalArgumentException) {
+            }
+
+        }
+        this.viewManager = viewManager
+    }
+
+    private fun createContentLayoutParams(): WindowManager.LayoutParams {
+        val lp = getLayoutParams()
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT
+        lp.flags = lp.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        return lp
+    }
+
+    private fun createUiControlLayoutParams(): WindowManager.LayoutParams {
+        val lp = getLayoutParams()
+        lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+        tryUpdate(lp)
+        return lp
+    }
+
     fun show() {
-        if (!hasOverlayPermission(ctx)) return
+        // if (!hasOverlayPermission(ctx)) return
         if (isShown) return
         // 添加内容区域
-        var contentLp = contentBinding.root.layoutParams
-        if (contentLp == null) {
-            contentLp = getLayoutParams()
-            contentLp.width = WindowManager.LayoutParams.MATCH_PARENT
-            contentLp.height = WindowManager.LayoutParams.MATCH_PARENT
-            contentLp.flags = contentLp.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-        }
-        wm.addView(contentBinding.root, contentLp)
+        val contentLp = contentBinding.root.layoutParams ?: createContentLayoutParams()
+        viewManager.addView(contentBinding.root, contentLp)
         // 添加控制栏
-        var lp = uiControlBinding.root.layoutParams
-        if (lp == null) {
-            lp = getLayoutParams()
-            lp.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-        }
+        val lp = uiControlBinding.root.layoutParams ?: createUiControlLayoutParams()
         tryUpdate(lp)
-        wm.addView(uiControlBinding.root, lp)
+        viewManager.addView(uiControlBinding.root, lp)
         isShown = true
     }
 
     fun close() {
         if (!isShown) return
-        wm.removeViewImmediate(uiControlBinding.root)
-        wm.removeViewImmediate(contentBinding.root)
+        viewManager.removeView(uiControlBinding.root)
+        viewManager.removeView(contentBinding.root)
         isShown = false
     }
 
     fun onActivityChange(hostActivity: WeakReference<Activity>) {
-        this.hostActivity = hostActivity
-        pages.forEach { it.onHostActivityChange(hostActivity) }
+        if (this.hostActivity?.get() != hostActivity.get()) {
+            this.hostActivity = hostActivity
+            pages.forEach { it.onHostActivityChange(hostActivity) }
+        }
     }
 
     /**
@@ -110,7 +137,7 @@ class UIControl(private val ctx: Context) {
      */
     fun switchPage(delegate: UIPage) {
         // api 23后需要动态申请，之前默认开启
-        if (!hasOverlayPermission(ctx)) return
+        // if (!hasOverlayPermission(ctx)) return
 
         if (!pages.contains(delegate)) throw IllegalStateException("page not load")
         if (!delegate.isOnShow) {
@@ -123,23 +150,18 @@ class UIControl(private val ctx: Context) {
                     it.onClose()
                 }
             }
-            val lp = contentBinding.root.layoutParams as WindowManager.LayoutParams
+            val lp = contentBinding.root.layoutParams
             // 根据页面配置焦点和触摸状态
-            if (!delegate.enableTouch()) {
-                lp.flags = lp.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-            } else {
-                lp.flags = lp.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
-            }
-            if (!delegate.enableFocus()) {
-                lp.flags = lp.flags or WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-            } else {
-                lp.flags = lp.flags and WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE.inv()
-            }
-            wm.updateViewLayout(contentBinding.root, lp)
+            viewManager.makeTouchable(delegate.enableTouch(), lp)
+            viewManager.makeTouchable(delegate.enableFocus(), lp)
+            viewManager.updateViewLayout(contentBinding.root, lp)
+            // 二次设置焦点和触摸状态
+            contentBinding.root.makeTouchable(delegate.enableTouch())
+            contentBinding.root.makeFocusable(delegate.enableFocus())
         }
     }
 
-    private fun hasOverlayPermission(ctx: Context): Boolean {
+    fun hasOverlayPermission(ctx: Context): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(ctx)) {
                 // Logger.e("UIControl", "no overlay permission")
@@ -191,7 +213,7 @@ class UIControl(private val ctx: Context) {
         lp.y = config.offsetY
         if (hasOverlayPermission(ctx)) {
             try {
-                wm.updateViewLayout(uiControlBinding.root, lp)
+                viewManager.updateViewLayout(uiControlBinding.root, lp)
             } catch (_: Throwable) {
 
             }

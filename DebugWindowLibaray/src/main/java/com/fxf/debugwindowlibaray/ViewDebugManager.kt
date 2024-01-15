@@ -3,11 +3,17 @@ package com.fxf.debugwindowlibaray
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.view.ViewGroup
+import android.view.ViewManager
 import com.fxf.debugwindowlibaray.ui.EmptyPage
 import com.fxf.debugwindowlibaray.ui.UIControl
 import com.fxf.debugwindowlibaray.ui.UIPage
 import com.fxf.debugwindowlibaray.ui.UiControlConfig
+import com.fxf.debugwindowlibaray.ui.manager.CommonViewManagerImpl
+import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
+import com.fxf.debugwindowlibaray.ui.manager.WindowViewManagerImpl
 import java.lang.ref.WeakReference
+import java.util.LinkedList
 
 /**
  * 视图调试工具
@@ -18,15 +24,23 @@ import java.lang.ref.WeakReference
 class ViewDebugManager {
     // 是否支持应用外显示
     private var showOnOtherApplication = false
+    private var switchToCommonMode = false
     private val activityLifecycleCallbacks = object : ActivityStackCallback() {
 
+        private var topActivity: WeakReference<Activity>? = null
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             super.onActivityCreated(p0, p1)
             uiControl.onActivityChange(WeakReference(p0))
+            topActivity = WeakReference(p0)
+            switchRoot(p0)
         }
 
         override fun onActivityResumed(p0: Activity) {
             super.onActivityResumed(p0)
+            if (topActivity?.get() != p0) {
+                topActivity = WeakReference(p0)
+                switchRoot(p0)
+            }
             uiControl.onActivityChange(WeakReference(p0))
             uiControl.show()
         }
@@ -48,21 +62,40 @@ class ViewDebugManager {
                 uiControl.close()
             }
         }
+        private fun switchRoot(p0: Activity) {
+            if (!uiControl.hasOverlayPermission(p0) && switchToCommonMode) {
+                uiControl.switchViewManager(CommonViewManagerImpl(p0.findViewById<ViewGroup>(android.R.id.content)))
+            }
+        }
     }
     private lateinit var app: Application
-    val uiControl by lazy { UIControl(app) }
+    val uiControl: UIControl by lazy {
+        UIControl(app)
+    }
 
     /**
      * @param defaultPage 默认页面，为了方便默认是[EmptyPage]
+     * @param withoutOverlayPermissionSwitchToCommonMode 如果没有悬浮窗权限，是否切换为普通模式（试图将添加到activity中）
      */
-    fun init(app: Application, defaultPage: UIPage? = EmptyPage()) {
+    fun init(app: Application, withoutOverlayPermissionSwitchToCommonMode: Boolean = true, defaultPage: UIPage? = EmptyPage()) {
         if (this::app.isInitialized) return
         this.app = app
+        this.switchToCommonMode = withoutOverlayPermissionSwitchToCommonMode
         app.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
         if (defaultPage != null) {
             addPage(defaultPage)
         }
         // addPage(LogPage())
+    }
+
+    /**
+     * 设置试图管理器
+     * @param viewManager 试图管理器，比如WindowManager|ViewGroup
+     * [WindowViewManagerImpl]
+     * [CommonViewManagerImpl]
+     */
+    fun setRootView(viewManager: ViewManagerExt) {
+        uiControl.switchViewManager(viewManager)
     }
 
     fun addPage(page: UIPage, index: Int = uiControl.getAllPage().size) {
