@@ -1,11 +1,13 @@
 package com.fxf.debugwindowlibaray.ui.pages.log
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -91,6 +93,7 @@ open class LogPage : UIPage() {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreateContentView(ctx: Context, parent: ViewGroup): View {
         binding = LayoutLogPageBinding.inflate(LayoutInflater.from(ctx), parent, false)
         binding.ivClear.setOnClickListener {
@@ -109,8 +112,11 @@ open class LogPage : UIPage() {
         }
         binding.rvList.itemAnimator = null
         binding.rvList.adapter = adapter
-        binding.rvList.setOnTouchListener { _, _ ->
+        binding.rvList.setOnTouchListener { v, e ->
             autoScrollToBottom = false
+            if (e.action and MotionEvent.ACTION_MASK == MotionEvent.ACTION_DOWN) {
+                hideKeyboard(v)
+            }
             return@setOnTouchListener false
         }
         binding.edtFilter.setOnKeyListener { v, keyCode, _ ->

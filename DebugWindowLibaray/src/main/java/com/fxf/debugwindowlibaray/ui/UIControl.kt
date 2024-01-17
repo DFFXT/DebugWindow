@@ -153,7 +153,7 @@ class UIControl(private val ctx: Context) {
             val lp = contentBinding.root.layoutParams
             // 根据页面配置焦点和触摸状态
             viewManager.makeTouchable(delegate.enableTouch(), lp)
-            viewManager.makeTouchable(delegate.enableFocus(), lp)
+            viewManager.makeFocusable(delegate.enableFocus(), lp)
             viewManager.updateViewLayout(contentBinding.root, lp)
             // 二次设置焦点和触摸状态
             contentBinding.root.makeTouchable(delegate.enableTouch())
