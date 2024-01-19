@@ -99,6 +99,7 @@ open class LogPage : UIPage() {
         binding.ivClear.setOnClickListener {
             adapter.notifyItemRangeRemoved(0, logList.size)
             logList.clear()
+            autoScrollToBottom = true
         }
 
         binding.spinnerTag.onItemSelectedListener = object : OnItemSelectedListener {
@@ -138,6 +139,7 @@ open class LogPage : UIPage() {
         }
         binding.ivInputClear.setOnClickListener {
             binding.edtFilter.text = null
+            setFilter(filter = null)
         }
         binding.ivInputHistory.setOnClickListener {
             val dialog = LogHistoryDialog(this)
