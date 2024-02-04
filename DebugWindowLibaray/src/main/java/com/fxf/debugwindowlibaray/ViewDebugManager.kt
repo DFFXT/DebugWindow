@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.view.ViewGroup
-import android.view.ViewManager
 import com.fxf.debugwindowlibaray.ui.EmptyPage
 import com.fxf.debugwindowlibaray.ui.UIControl
 import com.fxf.debugwindowlibaray.ui.UIPage
@@ -13,7 +12,6 @@ import com.fxf.debugwindowlibaray.ui.manager.CommonViewManagerImpl
 import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
 import com.fxf.debugwindowlibaray.ui.manager.WindowViewManagerImpl
 import java.lang.ref.WeakReference
-import java.util.LinkedList
 
 /**
  * 视图调试工具
@@ -62,6 +60,7 @@ class ViewDebugManager {
                 uiControl.close()
             }
         }
+
         private fun switchRoot(p0: Activity) {
             if (!uiControl.hasOverlayPermission(p0) && switchToCommonMode) {
                 uiControl.switchViewManager(CommonViewManagerImpl(p0.findViewById<ViewGroup>(android.R.id.content)))
@@ -102,8 +101,8 @@ class ViewDebugManager {
         uiControl.loadPage(page, index)
     }
 
-    fun getPage(clazz: Class<UIPage>): List<UIPage> {
-        return uiControl.getAllPage().filter { clazz.isInstance(it) }
+    fun <T : UIPage> getPage(clazz: Class<T>): List<T> {
+        return uiControl.getAllPage().filter { clazz.isInstance(it) } as List<T>
     }
 
     fun switchPage(index: Int) {
