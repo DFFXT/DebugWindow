@@ -1,6 +1,7 @@
 package com.fxf.debugwindowlibaray.util.touch
 
 import android.content.Context
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -48,7 +49,6 @@ abstract class TouchHelper : View.OnTouchListener {
                     }
                 }
             }, 520)
-            return false
         } else if (event.action == MotionEvent.ACTION_MOVE) {
             //**开始滑动跳高距离限制
             // Logger.INSTANCE.d(TAG, startMove.toString() + " " + longClickConsume + " " + (Math.abs(preX - event.rawX) > Math.abs(preY - event.rawY) * 0.5))
@@ -76,7 +76,6 @@ abstract class TouchHelper : View.OnTouchListener {
             }
             movePreX = event.rawX
             movePreY = event.rawY
-            return true
         } else if (event.action == MotionEvent.ACTION_UP) {
             startLongClickMove = false
             startMove = false
@@ -91,7 +90,7 @@ abstract class TouchHelper : View.OnTouchListener {
             }
             longClickConsume = false
         }
-        return false
+        return true
     }
 
     /**

@@ -2,17 +2,20 @@ package com.fxf.debugwindowlibaray.ui
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.provider.Settings
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.ViewManager
 import android.view.WindowManager
 import com.fxf.debugwindowlibaray.databinding.LayoutViewDebugUiControlBinding
 import com.fxf.debugwindowlibaray.databinding.ViewDebugLayoutMainContentBinding
 import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
+import com.fxf.debugwindowlibaray.util.hasOverlayPermission
 import java.lang.ref.WeakReference
 import java.util.logging.Logger
 
@@ -23,7 +26,9 @@ class UIControl(private val ctx: Context) {
     // 顶部控制区域
     private val uiControlBinding by lazy {
         val binding = LayoutViewDebugUiControlBinding.inflate(LayoutInflater.from(ctx))
-        TouchDragWrapper(binding.root, binding.root)
+        TouchDragWrapper(binding.root, binding.root) {
+            return@TouchDragWrapper viewManager!!
+        }
         binding
     }
 
@@ -37,7 +42,7 @@ class UIControl(private val ctx: Context) {
 
     private var config: UiControlConfig = UiControlConfig()
 
-    private lateinit var viewManager: ViewManagerExt
+    private var viewManager: ViewManagerExt? = null
 
     // 是否显示
     var isShown = false
@@ -46,16 +51,15 @@ class UIControl(private val ctx: Context) {
     /**
      * 切换显示的区域
      */
-    fun switchViewManager(viewManager: ViewManagerExt) {
-        if (this::viewManager.isInitialized) {
+    internal fun switchViewManager(viewManager: ViewManagerExt?) {
+        if (this.viewManager != null && viewManager != this.viewManager) {
             try {
-                this.viewManager.removeView(uiControlBinding.root)
-                this.viewManager.removeView(contentBinding.root)
-                viewManager.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
-                viewManager.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
+                this.viewManager?.removeView(contentBinding.root)
+                this.viewManager?.removeView(uiControlBinding.root)
+                viewManager?.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
+                viewManager?.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
             } catch (_: IllegalArgumentException) {
             }
-
         }
         this.viewManager = viewManager
     }
@@ -75,23 +79,37 @@ class UIControl(private val ctx: Context) {
         return lp
     }
 
+    /**
+     * 控制栏根布局
+     */
+    fun getControlBarRoot(): ViewGroup {
+        return uiControlBinding.root
+    }
+
+    /**
+     * 内容区域跟布局
+     */
+    fun getContentRoot(): ViewGroup {
+        return contentBinding.root
+    }
+
     fun show() {
         // if (!hasOverlayPermission(ctx)) return
         if (isShown) return
         // 添加内容区域
         val contentLp = contentBinding.root.layoutParams ?: createContentLayoutParams()
-        viewManager.addView(contentBinding.root, contentLp)
+        viewManager?.addView(contentBinding.root, contentLp)
         // 添加控制栏
         val lp = uiControlBinding.root.layoutParams ?: createUiControlLayoutParams()
         tryUpdate(lp)
-        viewManager.addView(uiControlBinding.root, lp)
+        viewManager?.addView(uiControlBinding.root, lp)
         isShown = true
     }
 
     fun close() {
         if (!isShown) return
-        viewManager.removeView(uiControlBinding.root)
-        viewManager.removeView(contentBinding.root)
+        viewManager?.removeView(uiControlBinding.root)
+        viewManager?.removeView(contentBinding.root)
         isShown = false
     }
 
@@ -152,24 +170,16 @@ class UIControl(private val ctx: Context) {
             }
             val lp = contentBinding.root.layoutParams
             // 根据页面配置焦点和触摸状态
-            viewManager.makeTouchable(delegate.enableTouch(), lp)
-            viewManager.makeFocusable(delegate.enableFocus(), lp)
-            viewManager.updateViewLayout(contentBinding.root, lp)
+            viewManager?.makeTouchable(delegate.enableTouch(), lp)
+            viewManager?.makeFocusable(delegate.enableFocus(), lp)
+            viewManager?.updateViewLayout(contentBinding.root, lp)
             // 二次设置焦点和触摸状态
             contentBinding.root.makeTouchable(delegate.enableTouch())
             contentBinding.root.makeFocusable(delegate.enableFocus())
         }
     }
 
-    fun hasOverlayPermission(ctx: Context): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (!Settings.canDrawOverlays(ctx)) {
-                // Logger.e("UIControl", "no overlay permission")
-                return false
-            }
-        }
-        return true
-    }
+
 
     fun removePage(p: UIPage) {
         if (!pages.contains(p)) return
@@ -213,7 +223,7 @@ class UIControl(private val ctx: Context) {
         lp.y = config.offsetY
         if (hasOverlayPermission(ctx)) {
             try {
-                viewManager.updateViewLayout(uiControlBinding.root, lp)
+                viewManager?.updateViewLayout(uiControlBinding.root, lp)
             } catch (_: Throwable) {
 
             }

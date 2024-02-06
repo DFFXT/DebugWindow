@@ -7,7 +7,7 @@ open class BaseDragHelper : TouchHelper() {
     override fun touchDirection(distance: Float) {
     }
 
-    override fun longOnClick(x: Float, y: Float): Boolean = false
+    override fun longOnClick(x: Float, y: Float): Boolean = true
 
     override fun longClickMove(dx: Float, dy: Float) {
     }

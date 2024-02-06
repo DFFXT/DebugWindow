@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.WindowManager
 import androidx.startup.Initializer
 import com.fxf.debugwindowlibaray.ui.manager.WindowViewManagerImpl
+import com.fxf.debugwindowlibaray.util.hasOverlayPermission
 import java.util.Collections
 
 open class DebugWindowInitializer : Initializer<DebugWindowInitializer> {
@@ -16,7 +17,9 @@ open class DebugWindowInitializer : Initializer<DebugWindowInitializer> {
         application = context.applicationContext as Application
         viewDebugManager = ViewDebugManager()
         viewDebugManager.init(application)
-        viewDebugManager.setRootView(WindowViewManagerImpl(context.getSystemService(Context.WINDOW_SERVICE) as WindowManager))
+        if (hasOverlayPermission(application)) {
+           viewDebugManager.setRootView(WindowViewManagerImpl(context.getSystemService(Context.WINDOW_SERVICE) as WindowManager))
+        }
         return this
     }
 

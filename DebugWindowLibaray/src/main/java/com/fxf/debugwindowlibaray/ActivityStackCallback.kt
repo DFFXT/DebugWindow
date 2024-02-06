@@ -3,7 +3,6 @@ package com.fxf.debugwindowlibaray
 import android.app.Activity
 import android.app.Application.ActivityLifecycleCallbacks
 import android.os.Bundle
-import java.lang.ref.WeakReference
 
 /**
  * 应用生命周期监听
@@ -42,6 +41,9 @@ internal open class ActivityStackCallback : ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(p0: Activity) {
+        if (resumeCount == 0) {
+            onActivityAllFinish()
+        }
     }
 
     /**
@@ -56,5 +58,9 @@ internal open class ActivityStackCallback : ActivityLifecycleCallbacks {
      */
     open fun onProcessStop() {
         processIsFront = false
+    }
+
+    open fun onActivityAllFinish() {
+
     }
 }

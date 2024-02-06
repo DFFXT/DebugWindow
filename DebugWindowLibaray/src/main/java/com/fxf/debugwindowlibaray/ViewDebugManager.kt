@@ -11,6 +11,7 @@ import com.fxf.debugwindowlibaray.ui.UiControlConfig
 import com.fxf.debugwindowlibaray.ui.manager.CommonViewManagerImpl
 import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
 import com.fxf.debugwindowlibaray.ui.manager.WindowViewManagerImpl
+import com.fxf.debugwindowlibaray.util.hasOverlayPermission
 import java.lang.ref.WeakReference
 
 /**
@@ -23,24 +24,23 @@ class ViewDebugManager {
     // 是否支持应用外显示
     private var showOnOtherApplication = false
     private var switchToCommonMode = false
+    private var viewManager: ViewManagerExt? = null
     private val activityLifecycleCallbacks = object : ActivityStackCallback() {
 
         private var topActivity: WeakReference<Activity>? = null
         override fun onActivityCreated(p0: Activity, p1: Bundle?) {
             super.onActivityCreated(p0, p1)
             uiControl.onActivityChange(WeakReference(p0))
-            topActivity = WeakReference(p0)
-            switchRoot(p0)
         }
 
         override fun onActivityResumed(p0: Activity) {
-            super.onActivityResumed(p0)
             if (topActivity?.get() != p0) {
                 topActivity = WeakReference(p0)
                 switchRoot(p0)
             }
             uiControl.onActivityChange(WeakReference(p0))
             uiControl.show()
+            super.onActivityResumed(p0)
         }
 
         override fun onActivityDestroyed(p0: Activity) {
@@ -61,8 +61,17 @@ class ViewDebugManager {
             }
         }
 
+        override fun onActivityAllFinish() {
+            if (!isWindowManagerMode()) {
+                uiControl.close()
+                // 设置空，防止内存泄露
+                uiControl.switchViewManager(null)
+            }
+        }
+
         private fun switchRoot(p0: Activity) {
-            if (!uiControl.hasOverlayPermission(p0) && switchToCommonMode) {
+            // 没有悬浮窗权限则使用普通模式，没有主动设置，使用普通模式
+            if (!hasOverlayPermission(p0) && isWindowManagerMode() && switchToCommonMode || viewManager == null) {
                 uiControl.switchViewManager(CommonViewManagerImpl(p0.findViewById<ViewGroup>(android.R.id.content)))
             }
         }
@@ -88,12 +97,20 @@ class ViewDebugManager {
     }
 
     /**
-     * 设置试图管理器
+     * 是否是通过的windowManger来显示
+     */
+    private fun isWindowManagerMode(): Boolean {
+        return !hasOverlayPermission(app) && viewManager?.isWindowManger() == true
+    }
+
+    /**
+     * 设置试图管理器，自定义需要注意内存泄露
      * @param viewManager 试图管理器，比如WindowManager|ViewGroup
      * [WindowViewManagerImpl]
      * [CommonViewManagerImpl]
      */
-    fun setRootView(viewManager: ViewManagerExt) {
+    fun setRootView(viewManager: ViewManagerExt?) {
+        this.viewManager = viewManager
         uiControl.switchViewManager(viewManager)
     }
 

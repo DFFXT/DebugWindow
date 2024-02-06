@@ -1,7 +1,9 @@
 package com.fxf.debugwindowlibaray.util
 
+import android.content.Context
 import android.content.res.Resources
 import android.os.Build
+import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
@@ -53,4 +55,17 @@ internal fun adjustOrientation(rootView: View) {
         }
         rootView.minimumWidth = (ctx.resources.displayMetrics.widthPixels * 0.8f).toInt()
     }
+}
+
+/**
+ * 是否有悬浮窗权限
+ */
+fun hasOverlayPermission(ctx: Context): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (!Settings.canDrawOverlays(ctx)) {
+            // Logger.e("UIControl", "no overlay permission")
+            return false
+        }
+    }
+    return true
 }
