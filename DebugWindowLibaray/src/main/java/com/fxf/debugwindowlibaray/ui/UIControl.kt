@@ -56,8 +56,8 @@ class UIControl(private val ctx: Context) {
             try {
                 this.viewManager?.removeView(contentBinding.root)
                 this.viewManager?.removeView(uiControlBinding.root)
-                viewManager?.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
                 viewManager?.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
+                viewManager?.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
             } catch (_: IllegalArgumentException) {
             }
         }
