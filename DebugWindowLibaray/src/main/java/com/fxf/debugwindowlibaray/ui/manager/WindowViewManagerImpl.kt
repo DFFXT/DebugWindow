@@ -57,8 +57,8 @@ class WindowViewManagerImpl(private val windowManager: WindowManager) : ViewMana
             minTop = -(ctx.resources.displayMetrics.heightPixels - target.height) / 2
             maxBottom = -minTop
         }
-        target.translationX += dx
-        target.translationX += dy
+        /*target.translationX += dx
+        target.translationX += dy*/
 
         lp.x += dx.toInt() * xFactory
         lp.y += dy.toInt() * yFactory
