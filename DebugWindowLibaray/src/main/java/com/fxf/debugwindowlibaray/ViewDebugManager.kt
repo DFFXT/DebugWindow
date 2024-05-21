@@ -100,7 +100,7 @@ class ViewDebugManager {
      * 是否是通过的windowManger来显示
      */
     private fun isWindowManagerMode(): Boolean {
-        return !hasOverlayPermission(app) && viewManager?.isWindowManger() == true
+        return hasOverlayPermission(app) && viewManager?.isWindowManger() == true
     }
 
     /**
