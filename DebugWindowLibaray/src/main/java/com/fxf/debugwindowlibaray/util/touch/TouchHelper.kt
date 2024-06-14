@@ -48,7 +48,8 @@ abstract class TouchHelper : View.OnTouchListener {
                         longClickConsume = longOnClick(preX, preY)
                     }
                 }
-            }, 520)
+            }, 220)
+            return false
         } else if (event.action == MotionEvent.ACTION_MOVE) {
             //**开始滑动跳高距离限制
             // Logger.INSTANCE.d(TAG, startMove.toString() + " " + longClickConsume + " " + (Math.abs(preX - event.rawX) > Math.abs(preY - event.rawY) * 0.5))
@@ -76,6 +77,9 @@ abstract class TouchHelper : View.OnTouchListener {
             }
             movePreX = event.rawX
             movePreY = event.rawY
+            if (moved) {
+                return true
+            }
         } else if (event.action == MotionEvent.ACTION_UP) {
             startLongClickMove = false
             startMove = false
@@ -89,8 +93,11 @@ abstract class TouchHelper : View.OnTouchListener {
                 if (!moved) longClickUpNoMove(event.rawX, event.rawY) else longClickUpMoved(event.rawX, event.rawY)
             }
             longClickConsume = false
+            if (moved) {
+                return true
+            }
         }
-        return true
+        return false
     }
 
     /**

@@ -26,8 +26,8 @@ class UIControl(private val ctx: Context) {
     // 顶部控制区域
     private val uiControlBinding by lazy {
         val binding = LayoutViewDebugUiControlBinding.inflate(LayoutInflater.from(ctx))
-        TouchDragWrapper(binding.root, binding.root) {
-            return@TouchDragWrapper viewManager!!
+        binding.root.viewManagerProvider = {
+            viewManager
         }
         binding
     }
