@@ -51,11 +51,7 @@ class TouchConstraintLayout @JvmOverloads constructor(
         }
     }// .apply { attachToView(this@TouchConstraintLayout) }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        return touchHelper.onTouch(this, event)
-    }
-
-    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        return touchHelper.onTouch(this, ev) || super.onInterceptTouchEvent(ev)
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        return touchHelper.onTouch(this, ev) || super.dispatchTouchEvent(ev)
     }
 }

@@ -43,7 +43,7 @@ open class LogPage : UIPage() {
     private lateinit var binding: LayoutLogPageBinding
     private val logList = ArrayList<LogItem>()
     private val originLog = ArrayList<LogItem>()
-    private var logcatEnable = true
+    private var logcatEnable = false
 
     private var autoScrollToBottom = true
 

@@ -62,6 +62,7 @@ class ViewDebugManager {
         }
 
         override fun onActivityAllFinish() {
+            topActivity = null
             if (!isWindowManagerMode()) {
                 uiControl.close()
                 // 设置空，防止内存泄露
