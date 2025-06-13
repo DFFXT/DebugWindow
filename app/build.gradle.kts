@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.fxf.debugwindow"
-    compileSdk = 33
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.fxf.debugwindow"

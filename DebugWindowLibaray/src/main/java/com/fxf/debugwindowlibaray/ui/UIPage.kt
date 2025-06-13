@@ -8,14 +8,14 @@ import android.os.Build
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.CallSuper
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.updateLayoutParams
 import com.example.viewdebug.ui.dialog.BaseDialog
 import com.fxf.debugwindowlibaray.R
 import com.fxf.debugwindowlibaray.util.enablePress
 import com.fxf.debugwindowlibaray.util.enableSelect
+import com.fxf.debugwindowlibaray.util.updateLayoutParams
 import java.lang.ref.WeakReference
 
 abstract class UIPage {
@@ -116,7 +116,7 @@ abstract class UIPage {
     // 是否允许获取焦点，比如弹出输入法
     open fun enableFocus(): Boolean = false
     open fun onCreateTabView(ctx: Context, parent: ViewGroup): View {
-        return AppCompatImageView(ctx).apply {
+        return ImageView(ctx).apply {
             val size =
                 ctx.resources.getDimensionPixelSize(R.dimen.view_debug_control_ui_status_bar_height)
             layoutParams = ViewGroup.MarginLayoutParams(size, size)

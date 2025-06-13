@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Build
 import android.util.AttributeSet
 import android.view.MotionEvent
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.example.viewdebug.util.touch.BaseDragHelper
 import com.fxf.debugwindowlibaray.R
@@ -31,7 +30,7 @@ class TouchConstraintLayout @JvmOverloads constructor(
 
         override fun longOnClick(x: Float, y: Float): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                moveTarget.foreground = AppCompatResources.getDrawable(context, R.drawable.view_debug_common_rect_stroke_1dp)
+                moveTarget.foreground = context.getDrawable(R.drawable.view_debug_common_rect_stroke_1dp)
             }
             return true
         }

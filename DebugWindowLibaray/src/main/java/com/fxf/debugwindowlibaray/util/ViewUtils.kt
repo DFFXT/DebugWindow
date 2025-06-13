@@ -1,14 +1,11 @@
 package com.fxf.debugwindowlibaray.util
 
 import android.content.Context
-import android.content.res.Resources
 import android.os.Build
 import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.updateLayoutParams
 import com.fxf.debugwindowlibaray.R
 
 internal fun View.setSize(width: Int? = null, height: Int? = null) {
@@ -24,14 +21,14 @@ internal fun View.setSize(width: Int? = null, height: Int? = null) {
 fun View.enablePress() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         foreground =
-            AppCompatResources.getDrawable(context, R.drawable.view_debug_common_press_foreground)
+            context.getDrawable(R.drawable.view_debug_common_press_foreground)
     }
 }
 
 fun View.enableSelect() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         foreground =
-            AppCompatResources.getDrawable(context, R.drawable.view_debug_common_selected_foreground)
+            context.getDrawable(R.drawable.view_debug_common_selected_foreground)
     }
     /*val d = StateListDrawable()
     val pd = AppCompatResources.getDrawable(context, drawableId)!!.mutate()
@@ -40,6 +37,12 @@ fun View.enableSelect() {
     val nd = AppCompatResources.getDrawable(context, drawableId)!!.mutate()
     d.addState(intArrayOf(), nd)
     background = d*/
+}
+
+internal fun <T: ViewGroup.LayoutParams> View.updateLayoutParams(block: T.() -> Unit) {
+    val lp  = layoutParams as T
+    lp.block()
+    layoutParams = lp
 }
 
 

@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.view.ViewCompat
 import androidx.core.widget.ImageViewCompat
 import com.fxf.debugwindowlibaray.R
 
@@ -21,8 +19,8 @@ class EmptyPage : UIPage() {
     override fun enableFocus(): Boolean = false
     override fun onCreateTabView(ctx: Context, parent: ViewGroup): View {
         return super.onCreateTabView(ctx, parent).apply {
-            this as AppCompatImageView
-            ImageViewCompat.setImageTintList(this,  ColorStateList.valueOf(Color.WHITE))
+            this as ImageView
+            ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(Color.WHITE))
         }
     }
 

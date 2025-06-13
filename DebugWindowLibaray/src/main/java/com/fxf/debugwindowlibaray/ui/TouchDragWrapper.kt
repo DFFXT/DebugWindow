@@ -2,7 +2,6 @@ package com.fxf.debugwindowlibaray.ui
 
 import android.os.Build
 import android.view.View
-import androidx.appcompat.content.res.AppCompatResources
 import com.example.viewdebug.util.touch.BaseDragHelper
 import com.fxf.debugwindowlibaray.R
 import com.fxf.debugwindowlibaray.ui.manager.ViewManagerExt
@@ -24,7 +23,7 @@ class TouchDragWrapper(private val moveTarget: View, touchTarget: View, private 
 
             override fun longOnClick(x: Float, y: Float): Boolean {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    moveTarget.foreground = AppCompatResources.getDrawable(ctx, R.drawable.view_debug_common_rect_stroke_1dp)
+                    moveTarget.foreground = ctx.getDrawable(R.drawable.view_debug_common_rect_stroke_1dp)
                 }
                 return true
             }
