@@ -54,10 +54,13 @@ class UIControl(private val ctx: Context) {
     internal fun switchViewManager(viewManager: ViewManagerExt?) {
         if (this.viewManager != null && viewManager != this.viewManager) {
             try {
-                this.viewManager?.removeView(contentBinding.root)
-                this.viewManager?.removeView(uiControlBinding.root)
-                viewManager?.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
-                viewManager?.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
+                if (isShown) {
+                    // 如果目前正在显示中状态，需要移除然后重新添加
+                    this.viewManager?.removeView(contentBinding.root)
+                    this.viewManager?.removeView(uiControlBinding.root)
+                    viewManager?.addView(contentBinding.root, contentBinding.root.layoutParams ?: createContentLayoutParams())
+                    viewManager?.addView(uiControlBinding.root, uiControlBinding.root.layoutParams ?: createUiControlLayoutParams())
+                }
             } catch (_: IllegalArgumentException) {
             }
         }
